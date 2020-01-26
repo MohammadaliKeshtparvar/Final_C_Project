@@ -105,6 +105,22 @@ struct blocks_of_map{
     int Energy;
 };
 
+void initial(struct blocks_of_map* f, int n){
+    for(int i=0; i<n; i++){
+        for(int j=0; j<n; j++){
+            f->y = n-i-1;
+            f->x = n-j-1;
+            f->num = 0;
+            f->type = find(n-j-1, n-i-1, f);
+            if(f->type == '1')
+                f->Energy = 100;
+            else
+                f->Energy = 0;
+        }
+    }
+
+}
+
 
 int main(){
     bool flag = true;
@@ -112,21 +128,13 @@ int main(){
     FILE *f;
     int n = number_of_map(f);
     struct blocks_of_map Block[n*n];
-    int cnt = 0;
-    for(int i=0; i<n; i++){
-        for(int j=0; j<n; j++){
-            Block[cnt].y = n-i-1;
-            Block[cnt].x = n-j-1;
-            Block[cnt].num = 0;
-            Block[cnt].type = find(n-j-1, n-i-1, f);
-            if(Block[cnt].type == '1')
-                Block[cnt].Energy = 100;
-            else
-                Block[cnt].Energy = 0;
-        }
+
+    for(int i=0; i<n*n; i++){
+        initial(&(Block[i]), n);
     }
 
     Print_List1();
+
     scanf("%d", &number_of_choice);
     struct node* cell;
     struct node* cell1;
@@ -141,19 +149,29 @@ int main(){
         char name[50];
         getchar();
         gets(name);
-        if(find(x, y, f) == '3'){
-            cell = create_node(x, y, name, strlen(name));
-         }
+        while (1){
+            x = rand() % n;
+            y = rand() % n;
+            if(find(x, y, f) != '3') {
+                cell = create_node(x, y, name, strlen(name));
+                Block[n * (n - 1 - y) + x].num = 1;
+                break;
+            }
+        }
+
+
+    }
         for(int i=0; i<number_of_cells-1; i++){
             x = rand() % n;
             y = rand() % n;
 
-            if(found(x, y, cell) == 1 ){
+            if(found(x, y, cell) == 1 || find(x, y, f) == '3'){
                 i--;
                 continue;
             }
             gets(name);
             add_end(cell, create_node(x, y, name, strlen(name)));
+            Block[n * (n - 1 - y) + x].num = 1;
         }
     }
 
@@ -161,46 +179,57 @@ int main(){
         int number_of_cells1;
         scanf("%d", &number_of_cells1);
         srand(time(NULL));
-        int x = rand() % n;
-        int y = rand() % n;
+        int x ;
+        int y ;
         getchar();
         char name[50];
         gets(name);
-        //if(){
-        cell1 = create_node(x, y, name, sizeof(name));
-        //}
+        while(1){
+            x = rand() % n;
+            y = rand() % n;
+            if(find(x, y, f) != '3'){
+                cell1 = create_node(x, y, name, sizeof(name));
+                Block[n * (n - 1 - y) + x].num = 1;
+                break;
+            }
+        }
+
         for(int i=0; i<number_of_cells1-1; i++){
             x = rand() % n;
             y = rand() % n;
             gets(name);
-            if(found(x, y, cell1) == 1  ){
+            if(found(x, y, cell1) == 1  ||  find(x, y, f) == '3'){
                 i--;
                 continue;
             }
             add_end(cell1, create_node(x, y, name, sizeof(name)));
-
+            Block[n * (n - 1 - y) + x].num = 1;
         }
 
         int number_of_cells2;
         scanf("%d", &number_of_cells2);
         srand(time(NULL));
-        x = rand() % n;
-        y = rand() % n;
-
         getchar();
         gets(name);
-        //if(){
-        cell2 = create_node(x, y, name, sizeof(name));
-        //}
+        while(1){
+            x = rand() % n;
+            y = rand() % n;
+            if(found(x, y, cell2) == 0  &&  find(x, y, f) != '3'){
+                cell2 = create_node(x, y, name, sizeof(name));
+                break;
+            }
+        }
+
         for(int i=0; i<number_of_cells2-1; i++){
             x = rand() % n;
             y = rand() % n;
             gets(name);
-            if(found(x, y, cell2) == 1 ){
+            if(found(x, y, cell2) == 1  ||  find(x, y, f) == '3'){
                 i--;
                 continue;
             }
             add_end(cell2, create_node(x, y, name, sizeof(name)));
+            Block[n * (n - 1 - y) + x].num = 1;
         }
     }
 
